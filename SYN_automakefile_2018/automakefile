@@ -1,0 +1,68 @@
+#!/bin/sh
+
+if [ ! -e $1 ]; then
+    exit 84
+elif [ -d $1 ]; then
+    exit 84
+elif [ ! -z $2 ]; then
+    exit 84
+fi
+
+PROJECT_DIR=$(cat $1 | grep ^"PROJECT_DIR;" | cut -d';' -f 2)
+find -name *\.c > toto
+tab=$(grep "" toto)
+echo $tab
+SOURCES_DIR=$(cat $1 | grep ^"SOURCES_DIR;" | cut -d';' -f 2)
+HEADER_DIR=$(cat $1 | grep ^"HEADER_DIR;" | cut -d';' -f 2)
+LIBS_DIR=$(cat $1 | grep ^"LIBS_DIR;" | cut -d';' -f 2)
+EXEC=$(cat $1 | grep ^"EXEC;" | cut -d';' -f 2)
+CC=$(cat $1 | grep ^"CC;" | cut -d';' -f 2)
+CFLAGS=$(cat $1 | grep ^"CFLAGS;" | cut -d';' -f 2)
+LDFLAGS=$(cat $1 | grep ^"LDFLAGS;" | cut -d';' -f 2)
+
+printf "##
+## EPITECH PROJECT, 2018
+## Makefile
+## File description:
+## Makefile
+##\n\n" > ./$PROJECT_DIR/Makefile
+printf "source_filename\t=\t" >> ./$PROJECT_DIR/Makefile
+while read line
+do
+    printf "$line\t" >> ./$PROJECT_DIR/Makefile
+    printf "\\" >> ./$PROJECT_DIR/Makefile
+    printf "\n\t\t\t" >> ./$PROJECT_DIR/Makefile
+done < toto
+printf "\n" >> ./$PROJECT_DIR/Makefile
+if [ -n "$PROJECT_DIR" ]; then
+    printf "PROJECT_DIR\t=\t$PROJECT_DIR\n\n" >> ./$PROJECT_DIR/Makefile
+else
+    exit 84
+fi
+if [ -n "$SOURCES_DIR" ]; then
+    printf "SOURCES_DIR\t=\t$SOURCES_DIR\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$HEADER_DIR" ]; then
+    printf "HEADER_DIR\t=\t$HEADER_DIR\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$LIBS_DIR" ]; then
+    printf "LIBS_DIR\t=\t$LIBS_DIR\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$EXEC" ]; then
+    printf "EXEC\t\t=\t$EXEC\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$CC" ]; then
+    printf "CC\t\t=\t$CC\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$CFLAGS" ]; then
+    printf "CFLAGS\t\t=\t$CFLAGS\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+if [ -n "$LDFLAGS" ]; then
+    printf "LDFLAGS\t\t=\t$LDFLAGS\n\n" >> ./$PROJECT_DIR/Makefile
+fi
+printf "all:\tEXEC clean\n\n" >> ./$PROJECT_DIR/Makefile
+printf "EXEC:\n\t\$(CC) -o \$(EXEC) \$(source_filename) \$(LDFLAGS) \$(CFLAGS) \$(HEADER_DIR)\n\n" >> ./$PROJECT_DIR/Makefile
+printf "clean:\n\trm -f *.o *~ *#\n\n" >> ./$PROJECT_DIR/Makefile
+printf "fclean: clean\n\trm -f \$(EXEC)\n\n" >> ./$PROJECT_DIR/Makefile
+printf "re:\tfclean all\n" >> ./$PROJECT_DIR/Makefile
+rm toto
